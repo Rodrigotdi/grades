@@ -361,8 +361,84 @@ final_grades <- grades |>
     join_by(id)
   ) |>
   select(id, group, sex, final_grade) |>
-  arrange(desc(final_grade))|>slice_head(n=5)
+  arrange(desc(final_grade))
 
-final_grades|>knitr::kable()
+final_grades|>slice_head(n=5)|>knitr::kable()
+```
+
+### Question 24
+
+
+```{r}
+final_grades |>
+  ggplot(aes(x = group, y = final_grade)) +
+  geom_boxplot() + theme_minimal()
+
+```
+
+### Question 25
+
+```{r}
+final_grades |>
+  ggplot(aes(x = group, y = final_grade, fill = sex)) +
+  geom_boxplot() + theme_minimal()
+```
+
+### Question 26
+
+
+```{r}
+per_course_avg <- grades |>
+  filter(!is.na(grade)) |>
+  summarise(
+    avg_course = mean(grade),
+    .by = c(id, course_id)
+  ) |>
+  left_join(
+    course |> select(course_id, trimester),
+    join_by(course_id)
+  )
+
+
+pass_cond1 <- per_course_avg |>
+  summarise(
+    final_grade    = mean(avg_course),
+    min_course_avg = min(avg_course),
+    .by = id
+  )
+
+
+trimester_cond <- per_course_avg |>
+  summarise(
+    trim_avg = mean(avg_course),
+    .by = c(id, trimester)
+  ) |>
+  summarise(
+    min_trim_avg = min(trim_avg),
+    .by = id
+  )
+
+```
+
+```{r}
+
+pass_df <- pass_cond1|>left_join(trimester_cond,by=join_by(id))|>mutate(
+  pass=(min_course_avg>=5) & (min_trim_avg>=10))|>
+  left_join(students,by=join_by(id))|>select(id,group,final_grade,pass)
+  
+pass_df|>slice_head(n=10)|>knitr::kable()
+
+```
+
+### Question 27
+
+```{r}
+nb_fail <- pass_df|>filter(!pass,final_grade>=10)|>nrow()
+
+paste(
+  "There are",
+  nb_fail,
+  "students who do not pass but have a final grade greater or equal to 10."
+)
 ```
 
