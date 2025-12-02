@@ -16,3 +16,10 @@ library(ggplot2)
 
 ```
 
+## 1: Loading of course
+
+```{r}
+course <- vroom(here("courses.csv"))
+```
+
+
