@@ -330,5 +330,39 @@ avg_wider|> ggplot(aes(x=`Illusion and Enchantment`,y=`Ancient Magic and Mystici
 
 ### Question 21
 
+```{r}
+avg_wider |> summarise(cor_ill_cna=cor(`Illusion and Enchantment`,`Celestial Navigation and Astronomy`), .by = group)|> knitr::kable()
+```
 
+### Question 22
+
+```{r}
+most_corr_group <- avg_wider |> summarise(cor_ill_cna=cor(`Illusion and Enchantment`,`Celestial Navigation and Astronomy`), .by = group)|> slice_max(abs(cor_ill_cna),n=1)|>select(group)
+
+avg_wider|>semi_join(most_corr_group,by=join_by(group))|>ggplot(aes(x=`Illusion and Enchantment`,y=`Ancient Magic and Mysticism`))+
+  geom_point()+theme_minimal()
+ 
+```
+
+### Question 23
+
+```{r}
+final_grades <- grades |>
+  filter(!is.na(grade)) |>
+  summarise(
+    avg_course = mean(grade),
+    .by = c(id, course_id)
+  ) |>
+ summarise(
+    final_grade = mean(avg_course),
+    .by = id
+  ) |> left_join(
+    students |> select(id, group, sex),
+    join_by(id)
+  ) |>
+  select(id, group, sex, final_grade) |>
+  arrange(desc(final_grade))|>slice_head(n=5)
+
+final_grades|>knitr::kable()
+```
 
