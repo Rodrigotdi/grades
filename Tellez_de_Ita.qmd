@@ -269,6 +269,66 @@ grades |>
 ### Question 18
 
 ```{r}
-
+grades |>
+  filter(!is.na(grade)) |>
+  left_join(
+    course|> select(course_id, course),
+    join_by(course_id)
+  ) |>
+  filter(course == "Celestial Navigation and Astronomy") |>
+  summarise(
+    nb_grades_cna = n(),
+    .by = id
+  ) |>
+  left_join(
+    students |> select(id, group, sex),
+    join_by(id)
+  ) |>
+  ggplot(aes(x = group, y = nb_grades_cna, fill = sex)) +
+  geom_boxplot() + theme_minimal()
 ```
+
+# 5. Grade analysis
+
+### Question 19
+
+```{r}
+avg_per_course <- grades |>
+  filter(!is.na(grade)) |>
+  left_join(
+    course |> select(course_id, course),
+    join_by(course_id)
+  ) |>
+  summarise(
+    avg_grade = mean(grade),
+    .by = c(id, course)
+  ) |>
+  left_join(
+    students |> select(id, group),
+    join_by(id)
+  )
+
+
+avg_wider <- avg_per_course |>
+  select(id, group, course, avg_grade) |>
+  pivot_wider(
+    names_from = course,
+    values_from = avg_grade
+  )
+
+avg_wider|>select(id,group,`Ancient Magic and Mysticism`,`Celestial Navigation and Astronomy`)|>
+  slice_head(n=5)|>knitr::kable()
+```
+
+
+### Question 20
+
+```{r}
+avg_wider|> ggplot(aes(x=`Illusion and Enchantment`,y=`Ancient Magic and Mysticism`))+
+  geom_point()+theme_minimal()
+```
+
+### Question 21
+
+
 
