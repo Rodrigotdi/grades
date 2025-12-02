@@ -19,6 +19,8 @@ library(stringr)
 
 # 1. Introduction
 
+Link: https://github.com/Rodrigotdi/grades.git
+
 
 ## 1.1 Study organisation
 
@@ -171,5 +173,102 @@ grades |>
   ggplot(aes(x = factor(trimester), y = grade)) +
   geom_boxplot() +
   theme_minimal()
+```
+
+
+# 4. Attendance analysis
+
+### Question 13
+
+```{r}
+grades_per_student <- grades |>
+  filter(!is.na(grade)) |>
+  summarise(num_grades = n(), .by = id) |>
+  left_join(students |> select(id, group, sex), join_by(id)) |> 
+  slice_head(n = 5) 
+
+grades_per_student
+
+```
+
+```{r}
+grades_per_student |>
+  summarise(
+    min_grades = min(num_grades),
+    max_grades = max(num_grades),
+    avg_grades = mean(num_grades),
+    median_grades = median(num_grades)
+  ) |> knitr::kable()
+
+```
+
+### Question 14
+
+
+```{r}
+grades |>
+  filter(!is.na(grade)) |>
+  summarise(num_grades = n(), .by = id) |> 
+  left_join(students |> select(id, sex), join_by(id)) |>
+  ggplot(aes(x = num_grades, fill = sex)) +
+  geom_histogram(position = "dodge",bins=22) + theme_minimal()
+```
+
+
+### Question 15
+
+
+```{r}
+CNA <- grades |>
+  filter(!is.na(grade)) |>
+  left_join(course |> select(course_id, course),join_by(course_id)) |>
+  filter(course == "Celestial Navigation and Astronomy") |>
+  summarise(
+    nb_grades_cna = n(),
+    .by = id
+  ) |>
+  left_join(
+    students |> select(id, group),
+    join_by(id)
+  ) |>
+  select(id, group, nb_grades_cna)
+
+CNA |>slice_head(n=5)
+```
+
+
+### Question 16
+
+```{r}
+CNA|>summarise(n_students=n(), .by=nb_grades_cna) |> ggplot(aes(x=nb_grades_cna,y=n_students))+
+  geom_col()
+```
+
+### Question 17
+
+```{r}
+grades |>
+  filter(!is.na(grade)) |>
+  left_join(
+    course |> select(course_id, course),
+    join_by(course_id)
+  ) |>
+  filter(course == "Celestial Navigation and Astronomy") |>
+  summarise(
+    nb_grades_cna = n(),
+    .by = id
+  ) |>
+  left_join(
+    students |> select(id, group),
+    join_by(id)
+  ) |>
+  ggplot(aes(x = group, y = nb_grades_cna)) +
+  geom_boxplot() + theme_minimal()
+```
+
+### Question 18
+
+```{r}
+
 ```
 
