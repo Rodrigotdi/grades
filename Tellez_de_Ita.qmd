@@ -25,6 +25,7 @@ library(stringr)
 ### Question 1: Loading of course
 
 ```{r}
+#| message: false
 course <- vroom(here("courses.csv"))
 ```
 
@@ -32,6 +33,7 @@ course <- vroom(here("courses.csv"))
 
 
 ```{r}
+#| message: false
 course_table <- course|> rename ("course name"=course)|>rename(identifier=course_id)|> rename("number of exams"=nb_grades) |> knitr::kable()
 course_table
 ```
@@ -41,6 +43,7 @@ course_table
 ### Question 3
 
 ```{r}
+#| message: false
 students <- vroom(here("students.csv"),
                   col_types = cols(
   id = col_integer(),
@@ -62,7 +65,70 @@ paste(
 
 
 ```{r}
+#| message: false
 grades <- read_delim(here("grades.csv"),delim=";",na="_")
 ```
 
 # 2. Student population analysis
+
+### Question 5
+
+```{r}
+
+ggplot(students,aes(x=group))+
+  geom_bar()+
+  theme_minimal()
+```
+
+### Question 6
+
+```{r}
+students |>
+  ggplot(aes(x = group, fill = sex)) +
+  geom_bar(position = "dodge")+
+  theme_minimal()
+```
+
+### Question 7
+
+
+```{r}
+#| message: false
+library(lubridate)
+
+students_age <- students |>
+  mutate(age = time_length(today() - birth_date, unit = "year"))
+ggplot(students_age, aes(x = age)) +
+  geom_histogram() +
+  theme_minimal()
+```
+
+
+
+### Question 8
+
+
+```{r}
+students_age |>
+  summarise(
+    median_age = round(median(age)),
+    .by = group
+  ) |>
+  arrange(group) |> knitr::kable()
+
+```
+
+### Question 9
+
+```{r}
+oldest_per_group <- students_age |>
+  slice_max(age, n = 1,by = group) |>
+  mutate(age = round(age)) |>
+  select(group,id, sex, age) |> 
+  arrange(desc(age))|>
+  rename("oldest age"=age)|>
+  knitr::kable()
+
+oldest_per_group
+```
+
