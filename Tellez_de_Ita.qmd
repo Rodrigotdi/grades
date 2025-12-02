@@ -184,10 +184,10 @@ grades |>
 grades_per_student <- grades |>
   filter(!is.na(grade)) |>
   summarise(num_grades = n(), .by = id) |>
-  left_join(students |> select(id, group, sex), join_by(id)) |> 
-  slice_head(n = 5) 
+  left_join(students |> select(id, group, sex), join_by(id)) 
 
-grades_per_student
+grades_per_student|> 
+  slice_head(n = 5) 
 
 ```
 
@@ -198,7 +198,8 @@ grades_per_student |>
     max_grades = max(num_grades),
     avg_grades = mean(num_grades),
     median_grades = median(num_grades)
-  ) |> knitr::kable()
+  )|>knitr::kable()
+
 
 ```
 
@@ -440,5 +441,68 @@ paste(
   nb_fail,
   "students who do not pass but have a final grade greater or equal to 10."
 )
+```
+
+
+### Question 28
+
+```{r}
+pass_rate <- pass_df|>summarise(pass_rate=mean(pass),.by=group) 
+
+pass_rate|> ggplot(aes(x=group,y=pass_rate))+geom_col()+theme_minimal()
+```
+### Question 29
+
+
+```{r}
+per_course <- grades |>
+  filter(!is.na(grade)) |>
+  summarise(
+    avg_course = mean(grade),
+    .by = c(id, course_id)
+  ) |>
+  left_join(
+    course |> select(course_id, course),
+    join_by(course_id)
+  )
+
+course_fail_counts <- per_course |>
+  filter(avg_course < 5) |>
+  summarise(
+    n_students = n(),
+    .by = course
+  ) |>
+  arrange(desc(n_students))
+
+course_fail_counts|> knitr::kable()
+
+
+```
+
+### Question 30
+
+```{r}
+pass_age <- pass_df |>
+  left_join(
+    students |> select(id, birth_date),
+    join_by(id)
+  ) |>
+  mutate(
+    age = time_length(today() - birth_date, unit = "year"),
+    age = round(age)
+  )
+
+
+success_by_age <- pass_age |>
+  summarise(
+    success_rate = mean(pass),
+    .by = age
+  ) |>
+  arrange(age)
+
+
+success_by_age |>
+  ggplot(aes(x = age, y = success_rate))+
+  geom_point() + theme_minimal()
 ```
 
