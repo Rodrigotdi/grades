@@ -16,10 +16,23 @@ library(ggplot2)
 
 ```
 
-## 1: Loading of course
+
+
+
+# 1.1 
+
+## Question 1: Loading of course
 
 ```{r}
 course <- vroom(here("courses.csv"))
 ```
 
+## Question 2
 
+
+```{r}
+course_table <- course|> rename ("course name"=course)|>rename(identifier=course_id)|> rename("number of exams"=nb_grades) |> knitr::kable()
+course_table
+```
+
+# 1.2 Students
