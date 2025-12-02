@@ -1,7 +1,9 @@
 ---
 title: "Tellez de Ita"
 author: "Rodrigo Tellez de Ita"
-format: html
+format:
+  html: default
+  pdf: default
 ---
 
 ```{r}
@@ -81,6 +83,7 @@ ggplot(students,aes(x=group))+
   geom_bar()+
   theme_minimal()
 ```
+All the groups except 16 or 19 seems to have approximately the same number of students.
 
 ### Question 6
 
@@ -90,6 +93,8 @@ students |>
   geom_bar(position = "dodge")+
   theme_minimal()
 ```
+For the majority of the group the gender are well balanced.
+
 
 ### Question 7
 
@@ -105,7 +110,7 @@ ggplot(students_age, aes(x = age)) +
   theme_minimal()
 ```
 
-
+Most of the students are around 20 years old.
 
 ### Question 8
 
@@ -160,7 +165,7 @@ grades |>
   geom_col()+
   theme_minimal()
 ```
-
+All the groups have approximately the same averages in this course.
 
 ### Question 12
 
@@ -174,7 +179,7 @@ grades |>
   geom_boxplot() +
   theme_minimal()
 ```
-
+The grades seems to be the same around the different trimesters.
 
 # 4. Attendance analysis
 
@@ -214,7 +219,7 @@ grades |>
   ggplot(aes(x = num_grades, fill = sex)) +
   geom_histogram(position = "dodge",bins=22) + theme_minimal()
 ```
-
+There is no gender differences in the number of grades.
 
 ### Question 15
 
@@ -244,6 +249,8 @@ CNA |>slice_head(n=5)
 CNA|>summarise(n_students=n(), .by=nb_grades_cna) |> ggplot(aes(x=nb_grades_cna,y=n_students))+
   geom_col()
 ```
+Most of the students have 10 grades.
+
 
 ### Question 17
 
@@ -328,6 +335,7 @@ avg_wider|>select(id,group,`Ancient Magic and Mysticism`,`Celestial Navigation a
 avg_wider|> ggplot(aes(x=`Illusion and Enchantment`,y=`Ancient Magic and Mysticism`))+
   geom_point()+theme_minimal()
 ```
+The correlation between both classes is not very clear. Some of the students have very good grades in both courses but the grade in one course does seem to be close on the other course for everyone, at least on this graph. Let's check the correlations.
 
 ### Question 21
 
@@ -344,6 +352,7 @@ avg_wider|>semi_join(most_corr_group,by=join_by(group))|>ggplot(aes(x=`Illusion 
   geom_point()+theme_minimal()
  
 ```
+Even in the most correlated group it's hard to see a true correlation between both courses. 
 
 ### Question 23
 
@@ -376,6 +385,8 @@ final_grades |>
   geom_boxplot() + theme_minimal()
 
 ```
+Most of the groups have similar distributions of final grades except for some group that are very week (14) or strong (6) so maybe groups can have an impact on having good grades.
+
 
 ### Question 25
 
@@ -384,6 +395,8 @@ final_grades |>
   ggplot(aes(x = group, y = final_grade, fill = sex)) +
   geom_boxplot() + theme_minimal()
 ```
+
+Inside each group the gender doesn't seem to influence the final grades.
 
 ### Question 26
 
@@ -451,6 +464,9 @@ pass_rate <- pass_df|>summarise(pass_rate=mean(pass),.by=group)
 
 pass_rate|> ggplot(aes(x=group,y=pass_rate))+geom_col()+theme_minimal()
 ```
+
+The passing rate is high for every group except 14 and 11 that are below 50%.
+
 ### Question 29
 
 
@@ -478,6 +494,7 @@ course_fail_counts|> knitr::kable()
 
 
 ```
+History of the Arcane and Ancient Magic and Mysticism are the most difficult courses, even if the number of students below 5 is very low.
 
 ### Question 30
 
