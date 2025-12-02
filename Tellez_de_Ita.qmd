@@ -132,3 +132,44 @@ oldest_per_group <- students_age |>
 oldest_per_group
 ```
 
+# 3. Simple Grade analysis
+
+### Question 10 
+
+
+```{r}
+num_grades <- grades |>
+  filter(!is.na(grade)) |>
+  nrow()
+paste("The data set contains", num_grades, "grades.")
+```
+
+
+### Question 11
+
+```{r}
+grades |>
+  filter(!is.na(grade)) |>
+  left_join(course |> select(course_id, course), by=join_by(course_id)) |>
+  filter(course == "History of the Arcane") |>
+  left_join(students |> select(id, group), by=join_by(id)) |>
+  summarise(avg_group = mean(grade), .by = group) |>
+  ggplot(aes(x = group, y = avg_group)) +
+  geom_col()+
+  theme_minimal()
+```
+
+
+### Question 12
+
+
+```{r}
+grades |>
+  filter(!is.na(grade)) |>
+  left_join(
+    course |> select(course_id, trimester), join_by(course_id)) |>
+  ggplot(aes(x = factor(trimester), y = grade)) +
+  geom_boxplot() +
+  theme_minimal()
+```
+
