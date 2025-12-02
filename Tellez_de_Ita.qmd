@@ -522,4 +522,4 @@ success_by_age |>
   ggplot(aes(x = age, y = success_rate))+
   geom_point() + theme_minimal()
 ```
-
+The age does not really influence the success rate. In addition most of the students are around 20 years old so there are not enough "old" students to really see if age impacts success rate.
