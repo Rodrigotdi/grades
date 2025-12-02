@@ -4,3 +4,15 @@ author: "Rodrigo Tellez de Ita"
 format: html
 ---
 
+```{r}
+#| warning: false
+here::i_am("grades.Rproj")
+library(here)
+library(dplyr)
+library(readr)
+library(vroom)
+library(tidyr)
+library(ggplot2)
+
+```
+
