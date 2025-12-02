@@ -13,21 +13,22 @@ library(readr)
 library(vroom)
 library(tidyr)
 library(ggplot2)
+library(stringr)
 
 ```
 
+# 1. Introduction
 
 
+## 1.1 Study organisation
 
-# 1.1 
-
-## Question 1: Loading of course
+### Question 1: Loading of course
 
 ```{r}
 course <- vroom(here("courses.csv"))
 ```
 
-## Question 2
+### Question 2
 
 
 ```{r}
@@ -35,4 +36,33 @@ course_table <- course|> rename ("course name"=course)|>rename(identifier=course
 course_table
 ```
 
-# 1.2 Students
+## 1.2 Students
+
+### Question 3
+
+```{r}
+students <- vroom(here("students.csv"),
+                  col_types = cols(
+  id = col_integer(),
+  group = col_factor(),
+  birth_date = col_date(format = ""),
+  sex = col_factor()
+))
+
+paste(
+  "The birth_date column of the students data frame is of class",
+  class(students$birth_date)
+)
+
+```
+
+## 1.3 Grades
+
+### Question 4
+
+
+```{r}
+grades <- read_delim(here("grades.csv"),delim=";",na="_")
+```
+
+# 2. Student population analysis
